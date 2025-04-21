@@ -98,7 +98,7 @@ def fill_missing_texts(git, names):
             text = TEMPLATE.format(merge=merge, body=git.log_msg(merge.cid))
             with open(merge.filename, "w") as f:
                 f.write(text)
-            print(f"Generated {merge.filename}")
+            print(f"Generated {merge.filename}", file=sys.stderr)
 
 
 def changes(texts, limit=None):
