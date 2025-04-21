@@ -152,123 +152,43 @@ covered the cost of a Hue Sync Box!
 
 # Full changelog
 
-### 2025-03-13: `chrivers/docker-ca-certificates` + `chrivers/dockerfile-update`
+### 2025-04-21: `chrivers/z2m-refactoring`
 
-This fixes the docker build process for Bifrost, which was accidentally broken
-during the rush of recent, big merges coming in.
+This change cleans up a bunch of internal code related to the z2m backend, and
+makes two important user-facing improvement:
 
- - Add missing `libssl-dev` package for compile step
- - Add missing `libssl3` package for runtime container
- - Add missing bind mounts for building bifrost
- - Upgrade rust version for build container
- - Add missing `ca-certificates` package, to make hue api version checking
-   function correctly again.
+#### Status updates
+Previously, as part of supporting hue effects (candle, fireplace, etc), we would
+encode all light update requests to hue lights as the hue-specific
+`HueZigbeeUpdate` data format.
 
-With all these checks, the docker release of Bifrost should be back in a good
-state.
+This is the data format a Hue Bridge (mostly) uses to control lights, and is a
+quick and effective way to update all light settings at once, even the
+vendor-specific extensions.
 
-****************************************
+However, Zigbee2MQTT does not know how to report state updates when this update
+method is used. It just sees a "raw" message, and passes it along.
 
-### 2025-03-12: `chrivers/entertainment-reversing`
+So until we land better support in Zigbee2MQTT for dealing with these kinds of
+state updates, split light updates into two parts: one for regular light
+properties (on/off, brightness, etc), and one optional part for hue-specific
+effects.
 
-> [!IMPORTANT]
-> ***This is the big one people have been waiting for!*** :-)
+The hue-specific update is then only sent if needed and supported.
 
-After spending countless hours reverse-engineering the proprietary Zigbee data
-format used by Philips Hue lights for "Entertainment Mode", *even countlesser*
-hours have gone into implementing support in Bifrost.
+This makes z2m able to report changes to common properties again, but has the
+slight downside of sending two messages, if hue-specific extensions are used.
 
-Today, I am proud to announce that Bifrost is the **first program in the world**
-to have an entirely Open Source (Free Software) implementation of Hue
-Entertainment mode!
+Hopefully over time this can be simplified, but for now this is an improvement
+over the previous situation.
 
-This has been a monumental effort. Before starting this work, the Bifrost code
-base was about 7200 lines of code. Now, it is over 15000 lines!. In other
-words, implementing entertainment mode more than doubled the code base!
+#### Z-Stack entertainment mode fix
 
-I think it's fair to say, that this was more complicated than anticipated.
+Previously, "z-stack" based adaptors did not work with entertainment mode,
+because of the way the highly specialized Zigbee frames are constructed.
 
-To make this work at all, the Zigbee2Mqtt project was updated with patches from
-myself (@chrivers), @danielhitch, and the author of Zigbee2Mqtt, @koenkk.
-
-Special thanks to @koenkk for taking time out of his busy schedule, to help us
-get the necessary bits in place. The new code was first released in version 2.1.1.
-
-> [!WARNING]
-> Zigbee2Mqtt MUST BE AT LEAST version 2.1.1 for Entertainment Mode to work.
-
-> [!IMPORTANT]
-> Even though version 2.1.1 is the minimum version, version 2.1.3 or greater is
-> highly recommended, since some important bugs were fixed after version 2.1.1.
-
-This is the very first of Bifrost that supports Entertainment Mode at all, so
-please bear with us while we iron out any bugs or rough edges.
-
-Should work:
- - Creating Entertainment Areas from the Hue App.
- - Updating Entertainment Area settings.
- - Adding lights or 7-segment strips to entertainment areas.
- - Streaming to Entertainment Areas from "Hue Sync for PC" (tested).
- - Streaming to Entertainment Areas from Play HDMI sync box 8K (tested).
- - Streaming to one or more lights.
- - Streaming to a combination of lamps and light strips.
-
-Perhaps working: (please let us know what your experience is!)
- - Adding 3-segment strips to entertainment areas.
- - Adding non-color lights to entertainment areas.
- - Streaming to Entertainment Areas from Play HDMI sync box (older, non-8K version).
-
-Not yet working:
- - Adjusting "stream mode" ("From Device" vs "From Bridge")
- - Adjusting "relative brightness" for lights
- - Streaming in XY color mode (most things seem to use RGB mode)
-
-****************************************
-
-### 2025-03-12: `chrivers/hue-and-zcl-crates`
-
-The source code was reorganized to move reusable code out into libraries ("crates").
-
-The Philips Hue-specific code is now in the `hue` crate, while Zigbee and Zigbee
-Cluster Library code can be found in `zcl`.
-
-This makes the project easier to maintain, and faster to recompile when
-developing, but has no noticable impact for end users.
-
-****************************************
-
-### 2025-03-12: `chrivers/light-status-and-effects`
-
-After having reverse engineered and documented the proprietary [Hue Zigbee message formats](https://github.com/chrivers/bifrost/pull/93), we can start using this knowledge in Bifrost.
-
-This change updates the z2m backend, to enable support for all "Hue Effects" as seen in the Hue app.
-
-In other words, effects like "Candle", "Fireplace", "Opal", etc, are now fully supported on Hue lights connected over z2m. Ordinary light updates (for brightness, color, color temperature, etc) are now also controlled over this format, allowing for a faster, more efficient way to control Philips Hue lights.
-
-Since only Philips Hue lights support these vendor-specific Zigbee messages, all other lights will use the traditional code path from previous versions of Bifrost.
-
-****************************************
-
-### 2025-03-11: `chrivers/zigbee-docs`
-
-This merge request introduces significant enhancements to the documentation of the Bifrost project, specifically focusing on the reverse engineering and detailed description of the Hue Zigbee message formats.
-
-1. **New Document: Hue Zigbee Clusters**
-    - Added `hue-zigbee-clusters.md`, providing comprehensive information on custom Zigbee messages for Hue devices, focusing on lights.
-    - Covers clusters such as Hue Button events, Entertainment zones, Gradients, Effects, and Animations.
-    - Includes detailed descriptions of cluster-specific commands and attributes with byte structures and examples.
-
-2. **Entertainment Clusters Documentation**
-    - Detailed documentation of the Entertainment cluster (0xFC01), describing commands for updating entertainment zones, synchronizing entertainment zones, retrieving segment mappings, and configuring segments for entertainment mode.
-    - Provides byte structures and examples for these commands.
-
-3. **Gradients, Effects, and Animations Clusters**
-    - Descriptions of the Gradients, Effects, and Animations cluster (0xFC03), including combined state commands and various attributes.
-    - Sample values and descriptions help identify properties supported by different Hue devices.
-
-4. **Enhancements to Existing Documentation**
-    - Updated `hue-zigbee-format.md` with clarifications and additional details.
-    - Improvements include specifying `zigbee::EffectType`, adding examples for unpacking and packing color coordinates, and refining scaling values for color coordinates.
+This update changes how entertainment mode frames are constructed, allowing
+adapters in the Z-Stack family to join the fun.
 
 
 

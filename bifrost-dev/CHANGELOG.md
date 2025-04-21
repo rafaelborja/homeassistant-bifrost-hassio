@@ -12,20 +12,88 @@ in development at the time.
 
 # Changes
 
-### 2025-03-13: `chrivers/docker-ca-certificates` + `chrivers/dockerfile-update`
+### 2025-04-21: `chrivers/z2m-refactoring`
 
-This fixes the docker build process for Bifrost, which was accidentally broken
-during the rush of recent, big merges coming in.
+This change cleans up a bunch of internal code related to the z2m backend, and
+makes two important user-facing improvement:
 
- - Add missing `libssl-dev` package for compile step
- - Add missing `libssl3` package for runtime container
- - Add missing bind mounts for building bifrost
- - Upgrade rust version for build container
- - Add missing `ca-certificates` package, to make hue api version checking
-   function correctly again.
+#### Status updates
+Previously, as part of supporting hue effects (candle, fireplace, etc), we would
+encode all light update requests to hue lights as the hue-specific
+`HueZigbeeUpdate` data format.
 
-With all these checks, the docker release of Bifrost should be back in a good
-state.
+This is the data format a Hue Bridge (mostly) uses to control lights, and is a
+quick and effective way to update all light settings at once, even the
+vendor-specific extensions.
+
+However, Zigbee2MQTT does not know how to report state updates when this update
+method is used. It just sees a "raw" message, and passes it along.
+
+So until we land better support in Zigbee2MQTT for dealing with these kinds of
+state updates, split light updates into two parts: one for regular light
+properties (on/off, brightness, etc), and one optional part for hue-specific
+effects.
+
+The hue-specific update is then only sent if needed and supported.
+
+This makes z2m able to report changes to common properties again, but has the
+slight downside of sending two messages, if hue-specific extensions are used.
+
+Hopefully over time this can be simplified, but for now this is an improvement
+over the previous situation.
+
+#### Z-Stack entertainment mode fix
+
+Previously, "z-stack" based adaptors did not work with entertainment mode,
+because of the way the highly specialized Zigbee frames are constructed.
+
+This update changes how entertainment mode frames are constructed, allowing
+adapters in the Z-Stack family to join the fun.
+
+****************************************
+
+### 2025-04-21: `chrivers/websocket-tls`
+
+Implement support for using TLS with websockets ("wss://" urls)
+
+A few users are reporting that they use TLS for their z2m websockets, and this
+has previously not been supported.
+
+With these changes, the z2m websocket urls can be specified as "wss://..."
+instead of "ws://..." to enable TLS.
+
+Additionally, a new (optional) z2m per-server config option,
+`disable_tls_verify` has been added, to optionally turn TLS verification
+off. This is useful for certain testing scenarios, where self-signed
+certificates might be used.
+
+****************************************
+
+### 2025-04-21: `chrivers/upnp-description-xml`
+
+Implement support for UPNP and SSDP in Bifrost!
+
+These four-letter scrabble winners are discovery protocols, meant to improve auto-detection by clients.
+
+Previously, Bifrost only supported mDNS - yet another such protocol - which is what most (but not all) clients use.
+
+Specifically, Hue Essentials requires SSDP. Not only that, but Hue Essentials sends broken discovery requests, so special workarounds have had to be implemented to support it.
+
+We still know of at least 1 device that is not yet able to find a Bifrost bridge, even with these improvements.
+
+If you have a similar problem, please let us know.
+
+In any case, this should be a clear improvement in how easy it is to connect to Bifrost.
+
+****************************************
+
+### 2025-03-17: `chrivers/api-v1-hs-color-mode`
+
+Implement support for converting Hue/Saturation ("HS") light updates to modern XY-based values.
+
+This enables support for receiving Hue/Sat light updates over API V1, specifically for `ApiLightStateUpdate` (`PUT` requests for controlling lights).
+
+When such a request is received, it is converted to XY mode, and handled from there.
 
 ****************************************
 
@@ -85,15 +153,79 @@ Not yet working:
 
 ****************************************
 
-### 2025-03-12: `chrivers/hue-and-zcl-crates`
+### 2025-03-17: `chrivers/hue-crate-entertainment-mode`
 
-The source code was reorganized to move reusable code out into libraries ("crates").
+This pull request implements the necessary code in the hue crate, to support decoding and encoding of Hue Entertainment Mode (also known as "Sync mode").
 
-The Philips Hue-specific code is now in the `hue` crate, while Zigbee and Zigbee
-Cluster Library code can be found in `zcl`.
+There are two major new areas of support:
+ - Encoding and decoding the DTLS stream going to the bridge (from a sync client)
+ - Encoding and decoding the specialized Zigbee frames going from the bridge, to the lights.
 
-This makes the project easier to maintain, and faster to recompile when
-developing, but has no noticable impact for end users.
+Especially the latter part builds on the previous work done by the Bifrost project, to reverse engineer the Hue Entertainment zigbee format.
+
+This pull request does not in itself add entertainment mode support to the Bifrost bridge. It only adds required library code needed to implement that support in an upcoming pull request.
+
+****************************************
+
+### 2025-03-16: `chrivers/svc-crate`
+
+Implement a new crate ("svc") to manage rust-based micro-services.
+
+Bifrost consists of a number of "things" running independently, while performing work either on request, on a timer, or some combination of the two.
+
+Synchronizing, coordinating and sharing information between all these various parts of Bifrost, takes up a non-trivial amount of the codebase.
+
+That's why we are introducing a dedicates library (a "crate", in rust terminology) for managing services that implement a standardized interface, specifically, the `Service` trait.
+
+This makes it possible to share start/run/stop handling for all services, as well as more advanced features like policies ("if a service fails, what should happen?"), error handling, dependencies, and liveness checks.
+
+This PR introduces and builds up the "svc" crate, but does not change Bifrost to use it, yet.
+
+****************************************
+
+### 2025-03-16: `chrivers/api-v1-improvements`
+
+This PR combines a number of minor improvements to the Hue V1 api implementation.
+
+ - The virtual "daylight sensor" present in the v1 api is now partially implemented. It is now present in the api output, which is an improvement for programs that expected it to be present, but it does not yet do anything.
+ - The virtual "group 0", representing all lights on a bridge, is now implemented for the v1 api.
+ - Usernames for api v1 can now be any string, instead of only valid uuids.
+ - The "create user" endpoint can now reply with the "client key" needed for Entertainment Mode / Sync streams.
+ - The reported capabilities have been increased to report lots of space for activities.
+
+****************************************
+
+### 2025-03-15: `chrivers/hue-and-zcl-crates`
+
+This is one of those pull requests that are almost invisible for end users, but important for the developers of Bifrost.
+
+With this change, several pieces of Bifrost are split out into independent packages ("crates" in rust parlance).
+
+This includes:
+
+ - `crates/zcl`: Zigbee Cluster Library crate. This contains code needed to encode/decode Philips Hue zigbee messages.
+ - `crates/hue`: Contains data models and functions needed to work with Philips Hue lights, including color space handling, gradient encodings, and more.
+
+Improving the code this much was a lot of work: 56 commits, adding 1630 lines and removing 265.
+
+New features: None :-P
+
+****************************************
+
+### 2025-03-13: `chrivers/docker-ca-certificates` + `chrivers/dockerfile-update`
+
+This fixes the docker build process for Bifrost, which was accidentally broken
+during the rush of recent, big merges coming in.
+
+ - Add missing `libssl-dev` package for compile step
+ - Add missing `libssl3` package for runtime container
+ - Add missing bind mounts for building bifrost
+ - Upgrade rust version for build container
+ - Add missing `ca-certificates` package, to make hue api version checking
+   function correctly again.
+
+With all these checks, the docker release of Bifrost should be back in a good
+state.
 
 ****************************************
 
