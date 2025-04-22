@@ -12,6 +12,27 @@ in development at the time.
 
 # Changes
 
+### 2025-04-22: `chrivers/legacy-api-fixes`
+
+This update fixes bugs and adds workarounds for the legacy api.
+
+In particular, this greatly improves compatibility with Hue Essentials, which
+now works quite a bit better:
+
+ - Fix brightness scaling: Legacy api uses 0..254, while the new api uses 0..100
+ - Fix "group 0" handling: The bridge has a virtual "group 0", which represents all groups on the bridge
+ - Add workaround for scenes without `.speed` field (Hue Essentials does this), so we don't get an error
+
+****************************************
+
+### 2025-04-22: `chrivers/fix-error-handling`
+
+Fix error handling: We accidentally double-encoded the error as json, leading to, ironically, error errors.
+
+This should improve api responses when an error is returned. This is mostly a technical fix, with little user-facing impact.
+
+****************************************
+
 ### 2025-04-21: `chrivers/z2m-refactoring`
 
 This change cleans up a bunch of internal code related to the z2m backend, and
