@@ -152,16 +152,16 @@ covered the cost of a Hue Sync Box!
 
 # Full changelog
 
-### 2025-04-22: `chrivers/legacy-api-fixes`
+### 2025-04-29: `chrivers/bifrost-api-crate`
 
-This update fixes bugs and adds workarounds for the legacy api.
+This is a major internal refactoring, moving common code needed for
+communication with Bifrost into a separate library ("crate").
 
-In particular, this greatly improves compatibility with Hue Essentials, which
-now works quite a bit better:
+Existing crates are reworked to have "features" (compile flags), that allow
+partial functionality to be selected at compile time.
 
- - Fix brightness scaling: Legacy api uses 0..254, while the new api uses 0..100
- - Fix "group 0" handling: The bridge has a virtual "group 0", which represents all groups on the bridge
- - Add workaround for scenes without `.speed` field (Hue Essentials does this), so we don't get an error
+In the future, this will allow code to be shared between the backend, and an
+upcoming web frontend.
 
 ****************************************
 

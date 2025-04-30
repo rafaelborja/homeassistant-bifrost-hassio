@@ -11,6 +11,100 @@ and see if that solves the problem.
 
 We hope you will like Bifrost!
 
+### 2025-04-29: `chrivers/better-eventstream`
+
+When hue objects are updated, the even stream offers live updates of changed properties, to allow clients (e.g. the Hue App) to track the changes over time.
+
+So far, our mode of these eventstream blocks have been the same as for PUT updates.
+
+It turns out this is *almost* correct, but subtle wrong.
+
+Instead, the event streams are based on diffing json values, and including new and changed sub-values.
+
+Also, certain properties should *always* be included, if present. Most notably, the `.owner` field (see #76, which might be fixed by this.)
+
+Other clients might also be affected (improved) by this (see #122)
+
+****************************************
+
+### 2025-04-29: `chrivers/timezone-support`
+
+Implement proper timezone support.
+
+With these changes, the `bifrost.timezone` field in `config.yaml` is actually used to calculate the `.localtime` time field of the API config.
+
+Multiple people have reported that this support (combined with *actually* setting the correct timezone), resolves their problems with connecting to Bifrost (see for example https://github.com/chrivers/bifrost/issues/88)
+
+****************************************
+
+### 2025-04-29: `chrivers/mdns-upnp-fixes`
+
+- Entirely rework support for mDNS and SSDP/UPnP
+ - Fixed a bug where mDNS reported an invalid hostname for Bifrost
+ - Reworked my fork of tokio-ssdp crate, to make it respond properly
+ - Add support for "upgrading" firmware through Hue App!
+
+You read the last one right - if there's a new mandatory version upgrade before the automatic version check picks it up (it checks once per day), the Hue app will offer to upgrade the bridge firmware.
+
+Simply say yes to this exciting prospect! Code has been added to Bifrost that recognizes this update pattern, and re-checks the version number.
+
+The end result is that the Hue app *thinks* it has updated the bridge, which is all we need.
+
+****************************************
+
+### 2025-04-29: `chrivers/predictable-deterministic`
+
+Manually impl Hash for RType, to maintain predictable output
+
+if at all possible, RType::deterministic() should produce the same uuid in later versions of Bifrost as the current one.
+
+If not, everybody will see bad artefacts such as the infamous duplicate group issue, that has happened a few times by accident - and now we found out why.
+
+When reordering (or indeed just adding/removing) a variant of RType (Room, Scene, etc), all following variants would get a new index, and this meant a new hash.
+
+Now Hash is implemented manually, and a regression test has been added to prevent future accidents.
+
+****************************************
+
+### 2025-04-25: `chrivers/hue-route-refactoring`
+
+Refactor all route handling for Hue api v2 ("clip").
+
+Previously, each sub-scope (`/light`, `/scene`, etc) implementer their own routing for that particular set of routes.
+
+This works, but is highly repetitive, and was difficult to manage.
+
+Now, there is only a single router component for the clip api, which dispatches to the relevant handlers for the parts that are implemented in Bifrost.
+
+The biggest change (apart from being much easier to maintain) is that *all* routes are now very cleanly marked as one of
+
+  1) Supported
+  2) "Missing" (allowed by protocol, but not supported by Bifrost)
+  3) "Denied" (not allowed by protocol, and correctly rejected by Bifrost)
+
+Not only does this prevent duplicated bits of code and boilerplate, it also reduces risk of accidental divergence between various parts of the route handling.
+
+****************************************
+
+### 2025-04-22: `chrivers/legacy-api-fixes`
+
+This update fixes bugs and adds workarounds for the legacy api.
+
+In particular, this greatly improves compatibility with Hue Essentials, which
+now works quite a bit better:
+
+ - Fix brightness scaling: Legacy api uses 0..254, while the new api uses 0..100
+ - Fix "group 0" handling: The bridge has a virtual "group 0", which represents all groups on the bridge
+ - Add workaround for scenes without `.speed` field (Hue Essentials does this), so we don't get an error
+
+****************************************
+
+### 2025-04-23: `chrivers/http-log-ip`
+
+Add logging of client ip address and protocol (http/https) for http requests
+
+****************************************
+
 ### 2025-04-22: `chrivers/fix-error-handling`
 
 Fix error handling: We accidentally double-encoded the error as json, leading to, ironically, error errors.
