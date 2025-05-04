@@ -145,6 +145,73 @@ covered the cost of a Hue Sync Box!
 
 # Changelog (11 most recent changes)
 
+### 2025-05-04: `chrivers/ssdp-upnp-fix-uuid`
+
+This change fixes ssdp/upnp discovery of Bifrost bridges.
+
+Incorporating fixes from our forked version of tokio-ssdp makes Bifrost respond properly to M-SEARCH requests.
+
+This makes several types of devices that were previously unable to find Bifrost, able to do so. One example is Philips Ambilight TVs.
+
+Note: Because of a buggy implementation of the Hue protocol in those Ambilight TVs, they are still unable to use Bifrost as a streaming target. But at least they are now able to find Bifrost.
+
+****************************************
+
+### 2025-05-02: `chrivers/bifrost-api-crate`
+
+This is a major internal refactoring, moving common code needed for
+communication with Bifrost into a separate library ("crate").
+
+Existing crates are reworked to have "features" (compile flags), that allow
+partial functionality to be selected at compile time.
+
+In the future, this will allow code to be shared between the backend, and an
+upcoming web frontend.
+
+This change also adds support for adding/removing lights from a room, directly from the hue app!
+
+****************************************
+
+### 2025-05-02: `chrivers/z2m-refactoring`
+
+This change cleans up a bunch of internal code related to the z2m backend, and
+makes two important user-facing improvement:
+
+#### Status updates
+Previously, as part of supporting hue effects (candle, fireplace, etc), we would
+encode all light update requests to hue lights as the hue-specific
+`HueZigbeeUpdate` data format.
+
+This is the data format a Hue Bridge (mostly) uses to control lights, and is a
+quick and effective way to update all light settings at once, even the
+vendor-specific extensions.
+
+However, Zigbee2MQTT does not know how to report state updates when this update
+method is used. It just sees a "raw" message, and passes it along.
+
+So until we land better support in Zigbee2MQTT for dealing with these kinds of
+state updates, split light updates into two parts: one for regular light
+properties (on/off, brightness, etc), and one optional part for hue-specific
+effects.
+
+The hue-specific update is then only sent if needed and supported.
+
+This makes z2m able to report changes to common properties again, but has the
+slight downside of sending two messages, if hue-specific extensions are used.
+
+Hopefully over time this can be simplified, but for now this is an improvement
+over the previous situation.
+
+#### Z-Stack entertainment mode fix
+
+Previously, "z-stack" based adaptors did not work with entertainment mode,
+because of the way the highly specialized Zigbee frames are constructed.
+
+This update changes how entertainment mode frames are constructed, allowing
+adapters in the Z-Stack family to join the fun.
+
+****************************************
+
 ### 2025-04-29: `chrivers/better-eventstream`
 
 When hue objects are updated, the even stream offers live updates of changed properties, to allow clients (e.g. the Hue App) to track the changes over time.
@@ -244,51 +311,6 @@ Add logging of client ip address and protocol (http/https) for http requests
 Fix error handling: We accidentally double-encoded the error as json, leading to, ironically, error errors.
 
 This should improve api responses when an error is returned. This is mostly a technical fix, with little user-facing impact.
-
-****************************************
-
-### 2025-04-21: `chrivers/websocket-tls`
-
-Implement support for using TLS with websockets ("wss://" urls)
-
-A few users are reporting that they use TLS for their z2m websockets, and this
-has previously not been supported.
-
-With these changes, the z2m websocket urls can be specified as "wss://..."
-instead of "ws://..." to enable TLS.
-
-Additionally, a new (optional) z2m per-server config option,
-`disable_tls_verify` has been added, to optionally turn TLS verification
-off. This is useful for certain testing scenarios, where self-signed
-certificates might be used.
-
-****************************************
-
-### 2025-04-21: `chrivers/upnp-description-xml`
-
-Implement support for UPNP and SSDP in Bifrost!
-
-These four-letter scrabble winners are discovery protocols, meant to improve auto-detection by clients.
-
-Previously, Bifrost only supported mDNS - yet another such protocol - which is what most (but not all) clients use.
-
-Specifically, Hue Essentials requires SSDP. Not only that, but Hue Essentials sends broken discovery requests, so special workarounds have had to be implemented to support it.
-
-We still know of at least 1 device that is not yet able to find a Bifrost bridge, even with these improvements.
-
-If you have a similar problem, please let us know.
-
-In any case, this should be a clear improvement in how easy it is to connect to Bifrost.
-
-****************************************
-
-### 2025-03-17: `chrivers/api-v1-hs-color-mode`
-
-Implement support for converting Hue/Saturation ("HS") light updates to modern XY-based values.
-
-This enables support for receiving Hue/Sat light updates over API V1, specifically for `ApiLightStateUpdate` (`PUT` requests for controlling lights).
-
-When such a request is received, it is converted to XY mode, and handled from there.
 
 ## Full changelog
 

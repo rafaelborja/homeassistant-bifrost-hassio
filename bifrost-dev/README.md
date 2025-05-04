@@ -152,56 +152,17 @@ covered the cost of a Hue Sync Box!
 
 # Full changelog
 
-### 2025-04-29: `chrivers/bifrost-api-crate`
+### 2025-05-04: `chrivers/sync-stream-fixes`
 
-This is a major internal refactoring, moving common code needed for
-communication with Bifrost into a separate library ("crate").
+Major rework of entertainment streaming ("sync mode") for Bifrost!
 
-Existing crates are reworked to have "features" (compile flags), that allow
-partial functionality to be selected at compile time.
-
-In the future, this will allow code to be shared between the backend, and an
-upcoming web frontend.
-
-****************************************
-
-### 2025-04-21: `chrivers/z2m-refactoring`
-
-This change cleans up a bunch of internal code related to the z2m backend, and
-makes two important user-facing improvement:
-
-#### Status updates
-Previously, as part of supporting hue effects (candle, fireplace, etc), we would
-encode all light update requests to hue lights as the hue-specific
-`HueZigbeeUpdate` data format.
-
-This is the data format a Hue Bridge (mostly) uses to control lights, and is a
-quick and effective way to update all light settings at once, even the
-vendor-specific extensions.
-
-However, Zigbee2MQTT does not know how to report state updates when this update
-method is used. It just sees a "raw" message, and passes it along.
-
-So until we land better support in Zigbee2MQTT for dealing with these kinds of
-state updates, split light updates into two parts: one for regular light
-properties (on/off, brightness, etc), and one optional part for hue-specific
-effects.
-
-The hue-specific update is then only sent if needed and supported.
-
-This makes z2m able to report changes to common properties again, but has the
-slight downside of sending two messages, if hue-specific extensions are used.
-
-Hopefully over time this can be simplified, but for now this is an improvement
-over the previous situation.
-
-#### Z-Stack entertainment mode fix
-
-Previously, "z-stack" based adaptors did not work with entertainment mode,
-because of the way the highly specialized Zigbee frames are constructed.
-
-This update changes how entertainment mode frames are constructed, allowing
-adapters in the Z-Stack family to join the fun.
+- Now supports both XY and RGB mode
+- Fix stream closing on DTLS timeout/disconnect (no longer left lingering in "active" state).
+- Improves compatibility with Hue Sync Box
+- Add support for configurable streaming fps limit for each z2m backend
+- Increase timeout to match Hue Bridge
+- Adjust the smoothing factor (fade speed) to match the frame rate!
+- ..this smoothing factor adjustment is not even supported by a Hue Bridge! Only Bifrost :-)
 
 
 
