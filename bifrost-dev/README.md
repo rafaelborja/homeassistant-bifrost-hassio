@@ -152,17 +152,28 @@ covered the cost of a Hue Sync Box!
 
 # Full changelog
 
-### 2025-05-04: `chrivers/sync-stream-fixes`
+### 2025-05-10: `chrivers/z2m-new-features`
 
-Major rework of entertainment streaming ("sync mode") for Bifrost!
+After the many fundamental and infrastructure changes in Bifrost, it's finally
+time for a set of changes that add new features!
 
-- Now supports both XY and RGB mode
-- Fix stream closing on DTLS timeout/disconnect (no longer left lingering in "active" state).
-- Improves compatibility with Hue Sync Box
-- Add support for configurable streaming fps limit for each z2m backend
-- Increase timeout to match Hue Bridge
-- Adjust the smoothing factor (fade speed) to match the frame rate!
-- ..this smoothing factor adjustment is not even supported by a Hue Bridge! Only Bifrost :-)
+This one is particularly exciting, as it contains a number of exciting additions
+that directly improve the end-user experience.
+
+Bifrost is now able to:
+
+ - Update existing scenes (closes #85)
+ - Delete lights
+ - Add new lights to the bridge
+ - Add new lights to rooms
+ - Remove lights from rooms
+ - Make lights pulse when selected
+ - Learn scenes with gradient colors
+
+All these actions now work from the api, including directly from the Hue app!
+
+No more jumping back and forth between the app and z2m to perform common
+maintenance tasks!
 
 
 

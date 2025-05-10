@@ -12,6 +12,43 @@ in development at the time.
 
 # Changes
 
+### 2025-05-10: `chrivers/z2m-new-features`
+
+After the many fundamental and infrastructure changes in Bifrost, it's finally
+time for a set of changes that add new features!
+
+This one is particularly exciting, as it contains a number of exciting additions
+that directly improve the end-user experience.
+
+Bifrost is now able to:
+
+ - Update existing scenes (closes #85)
+ - Delete lights
+ - Add new lights to the bridge
+ - Add new lights to rooms
+ - Remove lights from rooms
+ - Make lights pulse when selected
+ - Learn scenes with gradient colors
+
+All these actions now work from the api, including directly from the Hue app!
+
+No more jumping back and forth between the app and z2m to perform common
+maintenance tasks!
+
+****************************************
+
+### 2025-05-09: `chrivers/apiv1-entertainment-mode`
+
+Implement complete support for entertainment zones ("sync mode") for the v1 api, including the obsolete (but apparently still used) streaming v1 api!
+
+This fixes support for at least the following:
+ - Philips Ambilight TVs (..ironically)
+ - The iLightShow app for streaming blinkenlights
+
+This change also improves logging and error handling related to sync streaming.
+
+****************************************
+
 ### 2025-05-04: `chrivers/sync-stream-fixes`
 
 Major rework of entertainment streaming ("sync mode") for Bifrost!

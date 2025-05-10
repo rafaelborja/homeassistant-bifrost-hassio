@@ -11,6 +11,32 @@ and see if that solves the problem.
 
 We hope you will like Bifrost!
 
+### 2025-05-09: `chrivers/apiv1-entertainment-mode`
+
+Implement complete support for entertainment zones ("sync mode") for the v1 api, including the obsolete (but apparently still used) streaming v1 api!
+
+This fixes support for at least the following:
+ - Philips Ambilight TVs (..ironically)
+ - The iLightShow app for streaming blinkenlights
+
+This change also improves logging and error handling related to sync streaming.
+
+****************************************
+
+### 2025-05-04: `chrivers/sync-stream-fixes`
+
+Major rework of entertainment streaming ("sync mode") for Bifrost!
+
+- Now supports both XY and RGB mode
+- Fix stream closing on DTLS timeout/disconnect (no longer left lingering in "active" state).
+- Improves compatibility with Hue Sync Box
+- Add support for configurable streaming fps limit for each z2m backend
+- Increase timeout to match Hue Bridge
+- Adjust the smoothing factor (fade speed) to match the frame rate!
+- ..this smoothing factor adjustment is not even supported by a Hue Bridge! Only Bifrost :-)
+
+****************************************
+
 ### 2025-05-04: `chrivers/ssdp-upnp-fix-uuid`
 
 This change fixes ssdp/upnp discovery of Bifrost bridges.

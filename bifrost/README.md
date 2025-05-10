@@ -145,6 +145,32 @@ covered the cost of a Hue Sync Box!
 
 # Changelog (11 most recent changes)
 
+### 2025-05-09: `chrivers/apiv1-entertainment-mode`
+
+Implement complete support for entertainment zones ("sync mode") for the v1 api, including the obsolete (but apparently still used) streaming v1 api!
+
+This fixes support for at least the following:
+ - Philips Ambilight TVs (..ironically)
+ - The iLightShow app for streaming blinkenlights
+
+This change also improves logging and error handling related to sync streaming.
+
+****************************************
+
+### 2025-05-04: `chrivers/sync-stream-fixes`
+
+Major rework of entertainment streaming ("sync mode") for Bifrost!
+
+- Now supports both XY and RGB mode
+- Fix stream closing on DTLS timeout/disconnect (no longer left lingering in "active" state).
+- Improves compatibility with Hue Sync Box
+- Add support for configurable streaming fps limit for each z2m backend
+- Increase timeout to match Hue Bridge
+- Adjust the smoothing factor (fade speed) to match the frame rate!
+- ..this smoothing factor adjustment is not even supported by a Hue Bridge! Only Bifrost :-)
+
+****************************************
+
 ### 2025-05-04: `chrivers/ssdp-upnp-fix-uuid`
 
 This change fixes ssdp/upnp discovery of Bifrost bridges.
@@ -297,20 +323,6 @@ now works quite a bit better:
  - Fix brightness scaling: Legacy api uses 0..254, while the new api uses 0..100
  - Fix "group 0" handling: The bridge has a virtual "group 0", which represents all groups on the bridge
  - Add workaround for scenes without `.speed` field (Hue Essentials does this), so we don't get an error
-
-****************************************
-
-### 2025-04-23: `chrivers/http-log-ip`
-
-Add logging of client ip address and protocol (http/https) for http requests
-
-****************************************
-
-### 2025-04-22: `chrivers/fix-error-handling`
-
-Fix error handling: We accidentally double-encoded the error as json, leading to, ironically, error errors.
-
-This should improve api responses when an error is returned. This is mostly a technical fix, with little user-facing impact.
 
 ## Full changelog
 
