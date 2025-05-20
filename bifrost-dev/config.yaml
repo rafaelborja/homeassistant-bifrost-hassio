@@ -1,6 +1,6 @@
 # https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
 name: Bifrost Dev
-version: dev-2025-05-19
+version: dev-2025-05-20
 slug: bifrost-dev
 description: "Bifrost enables you to emulate a Philips Hue Bridge to control lights, groups and scenes from Zigbee2Mqtt."
 url: "https://github.com/chrivers/bifrost/tree/dev"
@@ -25,6 +25,8 @@ host_network: true
 
 ## might be useful when we have a web ui
 # panel_icon: lightbulb-group
+
+webui: http://[HOST]:[PORT:80]/frontend
 
 ## apparmor with home assistant does. not. freaking. work.
 ## too many hours wasted debugging this..
