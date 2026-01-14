@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bashio
+#!/bin/bash
 
 # Define config path
 CONFIG_PATH="/config/bifrost.yaml"

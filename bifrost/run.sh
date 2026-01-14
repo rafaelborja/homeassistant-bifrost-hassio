@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bashio
+#!/bin/bash
 
 echo "Starting Bifrost Configuration..."
 chmod +x /config/bifrost/configure.sh
