@@ -73,12 +73,8 @@ bridge:
   gateway: "$GATEWAY_IP"
   timezone: America/New_York
 
-z2m:
-  mqtt:
-    host: $Z2M_HOST
-    port: $Z2M_PORT
-    topic: "$Z2M_TOPIC"
 
+z2m:
   server1:
     # Bifrost uses the Z2M Websocket to read states
     # Ensure port 8080 is open in Z2M config
