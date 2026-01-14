@@ -6,14 +6,14 @@ RUN apt-get update && apt-get install -y jq iproute2 dos2unix && rm -rf /var/lib
 
 # we need to start in /config/bifrost, so we have access to configuration,
 # state, certificate, etc
-WORKDIR /config
+WORKDIR /config/bifrost
 
 # Copy configuration scripts
-COPY configure.sh /config/bifrost/configure.sh
+COPY configure.sh /usr/local/bin/configure.sh
 COPY run.sh /run.sh
 
 # Fix line endings (CRLF -> LF) and permissions
-RUN dos2unix /run.sh /config/bifrost/configure.sh && \
-    chmod +x /run.sh /config/bifrost/configure.sh
+RUN dos2unix /run.sh /usr/local/bin/configure.sh && \
+    chmod +x /run.sh /usr/local/bin/configure.sh
 
 CMD [ "/run.sh" ]

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define config path
-CONFIG_PATH="/config/bifrost.yaml"
+CONFIG_PATH="/config/bifrost/config.yaml"
 
 # Helper function to read options
 # Home Assistant uses bashio for easier option handling, but we stick to raw jq/options.json 

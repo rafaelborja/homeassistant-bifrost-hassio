@@ -1,8 +1,9 @@
 #!/bin/bash
 
 echo "Starting Bifrost Configuration..."
-chmod +x /config/bifrost/configure.sh
-/config/bifrost/configure.sh
+mkdir -p /config/bifrost
+/usr/local/bin/configure.sh
 
 echo "Starting Bifrost..."
+cd /config/bifrost
 exec /app/bifrost
