@@ -19,7 +19,8 @@ You can now configure Bifrost directly from the **Configuration** tab in the Hom
 
 Options available:
 
-- **z2m_host**: Hostname of your Zigbee2MQTT instance (default: `core-zigbee2mqtt`)
+- **z2m_host**: Hostname of your Zigbee2MQTT Frontend/Add-on (default: `core-zigbee2mqtt`). **Do NOT** put your MQTT broker here.
+- **mqtt_host**: Hostname of your MQTT broker (default: `core-mosquitto`).
 - **z2m_port**: MQTT Port (default: `1883`)
 - **z2m_topic**: MQTT Base Topic (default: `zigbee2mqtt`)
 - **bridge_ip**: (Optional) Manually set bridge IP. If empty, auto-detected.

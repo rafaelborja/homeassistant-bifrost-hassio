@@ -22,12 +22,14 @@ log() {
 if [ -f "$OPTIONS_FILE" ]; then
     BRIDGE_MAC=$(jq -r '.bridge_mac // empty' $OPTIONS_FILE)
     BRIDGE_IP=$(jq -r '.bridge_ip // empty' $OPTIONS_FILE)
+    MQTT_HOST=$(jq -r '.mqtt_host // "core-mosquitto"' $OPTIONS_FILE)
     Z2M_HOST=$(jq -r '.z2m_host // "core-zigbee2mqtt"' $OPTIONS_FILE)
     Z2M_PORT=$(jq -r '.z2m_port // 1883' $OPTIONS_FILE)
     Z2M_TOPIC=$(jq -r '.z2m_topic // "zigbee2mqtt"' $OPTIONS_FILE)
     OVERWRITE=$(jq -r '.overwrite_config // false' $OPTIONS_FILE)
 else
     log "Options file not found, using defaults"
+    MQTT_HOST="core-mosquitto"
     Z2M_HOST="core-zigbee2mqtt"
     Z2M_PORT=1883
     Z2M_TOPIC="zigbee2mqtt"

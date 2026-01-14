@@ -35,6 +35,7 @@ apparmor: false
 options:
   bridge_mac: ""
   bridge_ip: ""
+  mqtt_host: core-mosquitto
   z2m_host: core-zigbee2mqtt
   z2m_port: 1883
   z2m_topic: zigbee2mqtt
@@ -44,6 +45,7 @@ options:
 schema:
   bridge_mac: str?
   bridge_ip: str?
+  mqtt_host: str
   z2m_host: str
   z2m_port: int
   z2m_topic: str
