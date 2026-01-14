@@ -31,3 +31,19 @@ host_network: true
 #
 # apparmor: true
 apparmor: false
+
+options:
+  bridge_mac: ""
+  bridge_ip: ""
+  z2m_host: core-zigbee2mqtt
+  z2m_port: 1883
+  z2m_topic: zigbee2mqtt
+  overwrite_config: false
+
+schema:
+  bridge_mac: str?
+  bridge_ip: str?
+  z2m_host: str
+  z2m_port: int
+  z2m_topic: str
+  overwrite_config: bool

@@ -7,11 +7,28 @@ and scenes from [Zigbee2Mqtt](https://www.zigbee2mqtt.io/).
 
 ## Installation guide
 
-  1. Install Bifrost Add-on
-  2. Configure Bifrost (see next sections)
-  3. Start Bifrost Add-on
+1. Install Bifrost Add-on
+2. Configure Bifrost (see next sections)
+3. Start Bifrost Add-on
 
 ## Configuring Bifrost
+
+### Automatic Configuration (Recommended)
+
+You can now configure Bifrost directly from the **Configuration** tab in the Home Assistant Add-on page.
+
+Options available:
+
+- **z2m_host**: Hostname of your Zigbee2MQTT instance (default: `core-zigbee2mqtt`)
+- **z2m_port**: MQTT Port (default: `1883`)
+- **z2m_topic**: MQTT Base Topic (default: `zigbee2mqtt`)
+- **bridge_ip**: (Optional) Manually set bridge IP. If empty, auto-detected.
+- **bridge_mac**: (Optional) Manually set bridge MAC. If empty, random MAC generated.
+- **overwrite_config**: Set to `true` to force regeneration of `bifrost.yaml` on restart.
+
+### Manual Configuration
+
+If you prefer to manually edit the configuration file, you can do so.
 
 > [!IMPORTANT]
 > You **must configure** bifrost before you can run it.
@@ -30,10 +47,10 @@ it here:
 
 ### If you have the popular "File Editor" add-on installed, do this:
 
-  1. Open "File Editor"
-  2. Go to the top level
-  3. Create directory `bifrost` (*lowercase*)
-  4. Inside that directory, create `config.yaml`
+1. Open "File Editor"
+2. Go to the top level
+3. Create directory `bifrost` (_lowercase_)
+4. Inside that directory, create `config.yaml`
 
 ## Configuration example
 
@@ -56,8 +73,7 @@ z2m:
 
 Please adjust this as needed.
 
-> [!IMPORTANT]
-> **Make sure** the "mac:" field matches the mac address on the network interface you want to serve requests from.
+> [!IMPORTANT] > **Make sure** the "mac:" field matches the mac address on the network interface you want to serve requests from.
 
 For details, see the [configuration reference](https://github.com/chrivers/bifrost/blob/master/doc/config-reference.md).
 
@@ -72,27 +88,27 @@ In the following, "z2m" is a shorthand for "Zigbee2Mqtt".
 ## Lights
 
 | Action                         | . . . | in z2m                                                  | . . . | in Bifrost          |
-|:-------------------------------|-------|:--------------------------------------------------------|-------|:--------------------|
-| Add a light                    |       | Add the light in z2m, it should appear in bifrost       |       | *Not supported yet* |
-| Remove a light                 |       | Remove the light in z2m, it should disappear in bifrost |       | *Not supported yet* |
-| Rename a light                 |       | Rename the light in z2m, bifrost should reflect this    |       | *Not supported yet* |
+| :----------------------------- | ----- | :------------------------------------------------------ | ----- | :------------------ |
+| Add a light                    |       | Add the light in z2m, it should appear in bifrost       |       | _Not supported yet_ |
+| Remove a light                 |       | Remove the light in z2m, it should disappear in bifrost |       | _Not supported yet_ |
+| Rename a light                 |       | Rename the light in z2m, bifrost should reflect this    |       | _Not supported yet_ |
 | Toggle light (on/off)          |       | Supported, state will be updated in bifrost             |       | Supported           |
 | Change color/color temperature |       | Supported, state will be updated in bifrost             |       | Supported           |
-| Set startup parameters         |       | Supported, state will be updated in bifrost             |       | *Not supported yet* |
+| Set startup parameters         |       | Supported, state will be updated in bifrost             |       | _Not supported yet_ |
 
 ## Groups (rooms)
 
 | Action         | . . . | in z2m                                                   | . . . | in Bifrost                                     |
-|:---------------|-------|:---------------------------------------------------------|-------|:-----------------------------------------------|
-| Add a group    |       | Add the group in z2m, it should appear as a room bifrost |       | *Not supported yet**                           |
-| Remove a group |       | Remove the group in z2m, it should disappear in bifrost  |       | *Not supported yet**                           |
+| :------------- | ----- | :------------------------------------------------------- | ----- | :--------------------------------------------- |
+| Add a group    |       | Add the group in z2m, it should appear as a room bifrost |       | \*Not supported yet\*\*                        |
+| Remove a group |       | Remove the group in z2m, it should disappear in bifrost  |       | \*Not supported yet\*\*                        |
 | Rename a light |       | Rename the group in z2m, bifrost should reflect this     |       | Room names can be specified in the config file |
 | Control lights |       | Supported by z2m, although not in the web ui             |       | Supported                                      |
 
 ## Scenes
 
 | Action           | . . . | in z2m                                                  | . . . | in Bifrost                                                             |
-|:-----------------|-------|:--------------------------------------------------------|-------|:-----------------------------------------------------------------------|
+| :--------------- | ----- | :------------------------------------------------------ | ----- | :--------------------------------------------------------------------- |
 | Add a scene      |       | Add the scene in z2m, it should appear in bifrost       |       | Fully supported. Adding a scene in Bifrost creates the scene in z2m!   |
 | Remove a group   |       | Remove the scene in z2m, it should disappear in bifrost |       | Fully supported. Removing a scene in Bifrost removes the scene in z2m! |
 | Rename a light   |       | Rename the group in z2m, bifrost should reflect this    |       | Supported                                                              |
@@ -134,14 +150,14 @@ I would like to personally thank the people who have helped this project financi
 Your support has resulted in major breakthroughs, and we all get to enjoy the results.
 
 The following people have donated a total of 25€ or more:
-  - Alexa & Peter Miller
-  - Modem-Tones
-  - Rohan Kapoor
-  - thk
+
+- Alexa & Peter Miller
+- Modem-Tones
+- Rohan Kapoor
+- thk
 
 In particular, I would like to thank Rohan Kapoor for his very generous donation, which
 covered the cost of a Hue Sync Box!
-
 
 # Changelog (11 most recent changes)
 
@@ -150,12 +166,13 @@ covered the cost of a Hue Sync Box!
 Implement complete support for entertainment zones ("sync mode") for the v1 api, including the obsolete (but apparently still used) streaming v1 api!
 
 This fixes support for at least the following:
- - Philips Ambilight TVs (..ironically)
- - The iLightShow app for streaming blinkenlights
+
+- Philips Ambilight TVs (..ironically)
+- The iLightShow app for streaming blinkenlights
 
 This change also improves logging and error handling related to sync streaming.
 
-****************************************
+---
 
 ### 2025-05-04: `chrivers/sync-stream-fixes`
 
@@ -169,7 +186,7 @@ Major rework of entertainment streaming ("sync mode") for Bifrost!
 - Adjust the smoothing factor (fade speed) to match the frame rate!
 - ..this smoothing factor adjustment is not even supported by a Hue Bridge! Only Bifrost :-)
 
-****************************************
+---
 
 ### 2025-05-04: `chrivers/ssdp-upnp-fix-uuid`
 
@@ -181,7 +198,7 @@ This makes several types of devices that were previously unable to find Bifrost,
 
 Note: Because of a buggy implementation of the Hue protocol in those Ambilight TVs, they are still unable to use Bifrost as a streaming target. But at least they are now able to find Bifrost.
 
-****************************************
+---
 
 ### 2025-05-02: `chrivers/bifrost-api-crate`
 
@@ -196,7 +213,7 @@ upcoming web frontend.
 
 This change also adds support for adding/removing lights from a room, directly from the hue app!
 
-****************************************
+---
 
 ### 2025-05-02: `chrivers/z2m-refactoring`
 
@@ -204,6 +221,7 @@ This change cleans up a bunch of internal code related to the z2m backend, and
 makes two important user-facing improvement:
 
 #### Status updates
+
 Previously, as part of supporting hue effects (candle, fireplace, etc), we would
 encode all light update requests to hue lights as the hue-specific
 `HueZigbeeUpdate` data format.
@@ -236,7 +254,7 @@ because of the way the highly specialized Zigbee frames are constructed.
 This update changes how entertainment mode frames are constructed, allowing
 adapters in the Z-Stack family to join the fun.
 
-****************************************
+---
 
 ### 2025-04-29: `chrivers/better-eventstream`
 
@@ -244,15 +262,15 @@ When hue objects are updated, the even stream offers live updates of changed pro
 
 So far, our mode of these eventstream blocks have been the same as for PUT updates.
 
-It turns out this is *almost* correct, but subtle wrong.
+It turns out this is _almost_ correct, but subtle wrong.
 
 Instead, the event streams are based on diffing json values, and including new and changed sub-values.
 
-Also, certain properties should *always* be included, if present. Most notably, the `.owner` field (see #76, which might be fixed by this.)
+Also, certain properties should _always_ be included, if present. Most notably, the `.owner` field (see #76, which might be fixed by this.)
 
 Other clients might also be affected (improved) by this (see #122)
 
-****************************************
+---
 
 ### 2025-04-29: `chrivers/timezone-support`
 
@@ -260,24 +278,24 @@ Implement proper timezone support.
 
 With these changes, the `bifrost.timezone` field in `config.yaml` is actually used to calculate the `.localtime` time field of the API config.
 
-Multiple people have reported that this support (combined with *actually* setting the correct timezone), resolves their problems with connecting to Bifrost (see for example https://github.com/chrivers/bifrost/issues/88)
+Multiple people have reported that this support (combined with _actually_ setting the correct timezone), resolves their problems with connecting to Bifrost (see for example https://github.com/chrivers/bifrost/issues/88)
 
-****************************************
+---
 
 ### 2025-04-29: `chrivers/mdns-upnp-fixes`
 
 - Entirely rework support for mDNS and SSDP/UPnP
- - Fixed a bug where mDNS reported an invalid hostname for Bifrost
- - Reworked my fork of tokio-ssdp crate, to make it respond properly
- - Add support for "upgrading" firmware through Hue App!
+- Fixed a bug where mDNS reported an invalid hostname for Bifrost
+- Reworked my fork of tokio-ssdp crate, to make it respond properly
+- Add support for "upgrading" firmware through Hue App!
 
 You read the last one right - if there's a new mandatory version upgrade before the automatic version check picks it up (it checks once per day), the Hue app will offer to upgrade the bridge firmware.
 
 Simply say yes to this exciting prospect! Code has been added to Bifrost that recognizes this update pattern, and re-checks the version number.
 
-The end result is that the Hue app *thinks* it has updated the bridge, which is all we need.
+The end result is that the Hue app _thinks_ it has updated the bridge, which is all we need.
 
-****************************************
+---
 
 ### 2025-04-29: `chrivers/predictable-deterministic`
 
@@ -291,7 +309,7 @@ When reordering (or indeed just adding/removing) a variant of RType (Room, Scene
 
 Now Hash is implemented manually, and a regression test has been added to prevent future accidents.
 
-****************************************
+---
 
 ### 2025-04-25: `chrivers/hue-route-refactoring`
 
@@ -303,15 +321,15 @@ This works, but is highly repetitive, and was difficult to manage.
 
 Now, there is only a single router component for the clip api, which dispatches to the relevant handlers for the parts that are implemented in Bifrost.
 
-The biggest change (apart from being much easier to maintain) is that *all* routes are now very cleanly marked as one of
+The biggest change (apart from being much easier to maintain) is that _all_ routes are now very cleanly marked as one of
 
-  1) Supported
-  2) "Missing" (allowed by protocol, but not supported by Bifrost)
-  3) "Denied" (not allowed by protocol, and correctly rejected by Bifrost)
+1. Supported
+2. "Missing" (allowed by protocol, but not supported by Bifrost)
+3. "Denied" (not allowed by protocol, and correctly rejected by Bifrost)
 
 Not only does this prevent duplicated bits of code and boilerplate, it also reduces risk of accidental divergence between various parts of the route handling.
 
-****************************************
+---
 
 ### 2025-04-22: `chrivers/legacy-api-fixes`
 
@@ -320,9 +338,9 @@ This update fixes bugs and adds workarounds for the legacy api.
 In particular, this greatly improves compatibility with Hue Essentials, which
 now works quite a bit better:
 
- - Fix brightness scaling: Legacy api uses 0..254, while the new api uses 0..100
- - Fix "group 0" handling: The bridge has a virtual "group 0", which represents all groups on the bridge
- - Add workaround for scenes without `.speed` field (Hue Essentials does this), so we don't get an error
+- Fix brightness scaling: Legacy api uses 0..254, while the new api uses 0..100
+- Fix "group 0" handling: The bridge has a virtual "group 0", which represents all groups on the bridge
+- Add workaround for scenes without `.speed` field (Hue Essentials does this), so we don't get an error
 
 ## Full changelog
 
