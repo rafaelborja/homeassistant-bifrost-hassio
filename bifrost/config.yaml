@@ -39,6 +39,7 @@ options:
   z2m_port: 1883
   z2m_topic: zigbee2mqtt
   overwrite_config: false
+  debug: false
 
 schema:
   bridge_mac: str?
@@ -47,3 +48,4 @@ schema:
   z2m_port: int
   z2m_topic: str
   overwrite_config: bool
+  debug: bool

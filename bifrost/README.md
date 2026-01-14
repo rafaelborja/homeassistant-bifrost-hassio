@@ -25,6 +25,7 @@ Options available:
 - **bridge_ip**: (Optional) Manually set bridge IP. If empty, auto-detected.
 - **bridge_mac**: (Optional) Manually set bridge MAC. If empty, random MAC generated.
 - **overwrite_config**: Set to `true` to force regeneration of `bifrost.yaml` on restart.
+- **debug**: Set to `true` to enable verbose debug logging for troubleshooting.
 
 ### Manual Configuration
 
