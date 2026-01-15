@@ -23,14 +23,15 @@ if [ -f "$OPTIONS_FILE" ]; then
     BRIDGE_MAC=$(jq -r '.bridge_mac // empty' $OPTIONS_FILE)
     BRIDGE_IP=$(jq -r '.bridge_ip // empty' $OPTIONS_FILE)
     MQTT_HOST=$(jq -r '.mqtt_host // "core-mosquitto"' $OPTIONS_FILE)
-    Z2M_HOST=$(jq -r '.z2m_host // "core-zigbee2mqtt"' $OPTIONS_FILE)
+    Z2M_HOST=$(jq -r '.z2m_host // "127.0.0.1"' $OPTIONS_FILE)
     Z2M_PORT=$(jq -r '.z2m_port // 1883' $OPTIONS_FILE)
     Z2M_TOPIC=$(jq -r '.z2m_topic // "zigbee2mqtt"' $OPTIONS_FILE)
+    Z2M_TOKEN=$(jq -r '.z2m_token // empty' $OPTIONS_FILE)
     OVERWRITE=$(jq -r '.overwrite_config // false' $OPTIONS_FILE)
 else
     log "Options file not found, using defaults"
     MQTT_HOST="core-mosquitto"
-    Z2M_HOST="core-zigbee2mqtt"
+    Z2M_HOST="127.0.0.1"
     Z2M_PORT=1883
     Z2M_TOPIC="zigbee2mqtt"
     OVERWRITE="false"
@@ -66,6 +67,15 @@ if [ -z "$GATEWAY_IP" ]; then
     GATEWAY_IP="127.0.0.1"
 fi
 
+# Construct URL
+if [ -n "$Z2M_TOKEN" ]; then
+    Z2M_URL="ws://$Z2M_HOST:8080/api?token=$Z2M_TOKEN"
+else
+    # Default URL, Bifrost might append /api or other defaults if needed, 
+    # but based on logs it seems to handle bare host:port by rewriting.
+    Z2M_URL="ws://$Z2M_HOST:8080"
+fi
+
 cat <<EOF > "$CONFIG_PATH"
 bridge:
   name: Bifrost Bridge
@@ -80,7 +90,7 @@ z2m:
   server1:
     # Bifrost uses the Z2M Websocket to read states
     # Ensure port 8080 is open in Z2M config
-    url: ws://$Z2M_HOST:8080 
+    url: $Z2M_URL 
 EOF
 
 log "Configuration generated at $CONFIG_PATH"
